@@ -1,0 +1,18 @@
+# مجلدات البناء المؤقتة
+build/
+build_aab/
+base_aab/
+# الملفات التنفيذية الضخمة والأدوات
+android.jar
+bundletool.jar
+uber-apk-signer-1.3.0.jar
+*.zip
+# مفاتيح التوقيع (يجب ألا ترفع أبداً لأسباب أمنية)
+debug.keystore
+*.keystore
+*.jks
+# ملفات النظام
+.DS_Store
+Thumbs.db
+*.deb
+crash_log.txt
