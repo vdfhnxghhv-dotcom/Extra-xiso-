@@ -138,7 +138,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    // دالة لجلب الاسم الحقيقي للملف من مدير الملفات
     private String getFileNameFromUri(Uri uri) {
         String result = null;
         if (uri.getScheme().equals("content")) {
@@ -161,14 +160,12 @@ public class MainActivity extends Activity {
         return result;
     }
 
-    // تحديث دالة النسخ للاحتفاظ بالاسم الأصلي
     private String copyToCache(Uri uri) {
         try {
             String fileName = getFileNameFromUri(uri);
             if (fileName == null || fileName.isEmpty()) {
                 fileName = "input_temp.iso";
             }
-            // تنظيف الاسم من أي رموز غريبة
             fileName = fileName.replaceAll("[^a-zA-Z0-9.-]", "_");
 
             InputStream in = getContentResolver().openInputStream(uri);
@@ -249,32 +246,22 @@ public class MainActivity extends Activity {
                     ProcessBuilder pb;
                     
                     if (isExtract) {
-                        // --- التسمية التلقائية للاستخراج ---
                         File inputFile = new File(inputPath);
                         String fileName = inputFile.getName();
-                        // إزالة الامتداد .iso للحصول على اسم المجلد
                         String baseName = fileName.contains(".") ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
                         
-                        // إنشاء المجلد داخل مسار الإخراج المحدد
-                        File targetDir = new File(outputPath, baseName);
-                        if (!targetDir.exists()) targetDir.mkdirs();
-                        
+                        // التعديل: الأداة ستعمل داخل مجلد الإخراج، وستقوم بإنشاء مجلد باسم اللعبة تلقائياً
                         pb = new ProcessBuilder(binaryFile.getAbsolutePath(), "-x", inputPath);
-                        pb.directory(targetDir); 
+                        pb.directory(new File(outputPath)); 
                     } else {
-                        // --- التسمية التلقائية للإنشاء ---
                         File inputDir = new File(inputPath);
                         String folderName = inputDir.getName();
                         
-                        // إضافة .iso إلى اسم المجلد
                         File outputFile = new File(outputPath, folderName + ".iso");
-                        File outputParent = outputFile.getParentFile();
-                        if (outputParent != null && !outputParent.exists()) {
-                            outputParent.mkdirs();
-                        }
                         
-                        pb = new ProcessBuilder(binaryFile.getAbsolutePath(), "-c", inputPath, outputFile.getAbsolutePath());
-                        pb.directory(outputParent);
+                        // التعديل: الأداة ستعمل داخل مجلد اللعبة، وتستخدم "." لضغط المحتويات فقط
+                        pb = new ProcessBuilder(binaryFile.getAbsolutePath(), "-c", ".", outputFile.getAbsolutePath());
+                        pb.directory(inputDir);
                     }
 
                     pb.redirectErrorStream(true);
